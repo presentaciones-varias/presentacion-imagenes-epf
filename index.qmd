@@ -1,0 +1,279 @@
+---
+# title: "hallazgos imagenes epf"
+# author: "Javiera Preuss"
+format:
+  revealjs:
+    auto-stretch: false
+    margin: 0
+    slide-number: true
+    scrollable: true
+    preview-links: auto
+    page-layout: custom
+    logo: imagenes/logo_portada2.png
+    css: ine_quarto_styles.css
+    chalkboard: 
+      boardmarker-width: 20
+      buttons: false
+    # footer: <https://quarto.org>
+engine: knitr
+---
+
+#
+
+
+<!---
+# TODO: this does not work
+ ![](imagenes/logo_portada2.png){.center style="width: 20%;"}   
+--->
+
+[]{.linea-superior} 
+[]{.linea-inferior} 
+
+<!---
+ <img src="imagenes/logo_portada2.png" style="width: 20%"/>  
+--->
+
+<img src="imagenes/logo_portada2.png" width="20%"/>  
+
+
+[**Prueba de conceptos: detección de texto manuscrito en cuestionario gastos diarios EPF**]{.big-par .center-justified}
+
+[**Área de Ciencia de Datos**]{.medium-par.center-justified}
+
+[**Unidad de Gobierno de Datos**]{.small-par.center-justified}
+
+[**Junio 2025**]{.big-par .center-justified}
+
+
+## Contenidos  
+
+- Contexto 📄🤔
+
+- Metodologías aplicadas ⚙️🔨
+
+- Conclusiones 🚀
+
+
+## Contexto 
+
+:::{.incremental .medium-par}
+
+- En reuniones pasadas, se presentaron 4 problemáticas con el cuadernillo de gastos diarios:
+  
+  1. Automatización de descarga de boletas de supermercados
+  
+  2. Detección de información escrita de boletas (nombre establecimiento, número boleta, RUT, monto)
+  
+  3. Detección de texto manuscrito de gastos diarios
+  
+  4. Identificación de número en cuadrado *día sin gasto*/*día sin registro*
+
+:::
+
+
+## Metodologías aplicadas (1/6)
+
+:::{.incremental .medium-par}
+
+1. Automatización de descarga de boletas de supermercados: 
+  
+  - Se intentó realizar un scraping a las páginas de los supermercados, pero estos contenían captchas de compleja solución
+  
+    [<img src="imagenes/plots/captcha1.jpg" width="35%"/>]{.center}
+  
+  - Si bien investigaron alternativas para responder estos captchas, algunas de las soluciones parciales involucraban uso de tecnología de inteligencia artificial de pago
+    
+:::
+
+
+## Metodologías aplicadas (2/6)
+
+:::{.incremental .medium-par}
+
+- Para los puntos 2, 3 y 4, el foco principal es poder identificar el texto presente en la imagen
+
+  [<img src="imagenes/plots/cuadernillo1.jpg" width="70%"/>]{.center}
+
+- Antes de diseñar un flujo de recorte de imágenes, se realizaron pruebas de detección de texto con modelos preentrenados.
+
+  - Estos modelos de *deep learning* poseen arquitecturas complejas que procesan la imagen, identifican patrones y posteriormente construyen el texto (visión computacional y post-procesamiento NLP).
+  
+    [<img src="imagenes/plots/trocr.jpg" width="80%"/>]{.center}
+
+:::
+
+
+## Metodologías aplicadas (3/6)
+
+:::{.incremental .medium-par}
+
+- Los modelos utilizados para la prueba de conceptos son: 
+
+  | Modelo | Español| Resultado prueba | Link |
+  |---|---|----|---|
+  | Paquete easyocr*|✔️| Detección numérica: ❌<br/> Detección palabras: ❌ |[Link repo](https://github.com/JaidedAI/EasyOCR) |
+  | microsoft/trocr-base-printed |🟡️| Detección numérica: ❌<br/> Detección palabras:  ❌| [Link hugginface](https://huggingface.co/microsoft/trocr-base-printed)|
+  | Paquete PaddleOCR*|✔️| Detección numérica: ❌ <br/> Detección palabras: ❌ |[Link repo](https://github.com/PaddlePaddle/PaddleOCR)|
+  | qantev/trocr-base-spanish|✔️| Detección numérica: 🟡 <br/> Detección palabras:  ❌| [Link hugginface](https://huggingface.co/qantev/trocr-base-spanish)|
+  | qantev/trocr-large-spanish|✔️| Detección numérica: 🟡 <br/> Detección palabras:  🟡 | [Link hugginface](https://huggingface.co/qantev/trocr-large-spanish)|
+
+- Se utilizó un set de 28 imágenes, las cuales están compuestas de números, fechas y frases.
+
+:::
+
+
+
+## Metodologías aplicadas (4/6)
+
+Ejemplos de detección **numérica** con modelos base y large de TrOCR:
+
+:::: {layout-ncol=2 .medium-par}
+
+:::{.fragment .medium-par}
+
+<img src="imagenes/plots/num_3.jpg" width="85%" />
+
+<img src="imagenes/plots/num_4.jpg" width="85%" />
+
+:::
+
+:::fragment
+
+<img src="imagenes/plots/num_1.jpg" width="85%" />
+
+<img src="imagenes/plots/num_2.jpg" width="85%" />
+:::
+
+::::
+
+
+## Metodologías aplicadas (5/6)
+
+Ejemplos de detección de **fechas** con modelos base y large de TrOCR:
+
+:::: {layout-ncol=2 .medium-par}
+
+:::{.fragment .medium-par}
+
+<img src="imagenes/plots/fecha_1.jpg" width="80%" />
+
+<img src="imagenes/plots/fecha_2.jpg" width="80%" />
+
+
+:::
+
+:::fragment
+<img src="imagenes/plots/fecha_3.jpg" width="80%" />
+:::
+
+::::
+
+
+## Metodologías aplicadas (6/6)
+
+Ejemplos de detección de **palabras** con modelos base y large de TrOCR:
+
+:::: {layout-ncol=2 .medium-par}
+
+:::{.fragment .medium-par}
+
+<img src="imagenes/plots/palabras_1.jpg" width="85%" />
+
+<img src="imagenes/plots/palabras_2.jpg" width="85%" />
+
+:::
+
+:::fragment
+
+<img src="imagenes/plots/palabras_3.jpg" width="85%" />
+
+<img src="imagenes/plots/palabras_4.jpg" width="85%" />
+
+<img src="imagenes/plots/palabras_5.jpg" width="85%" />
+:::
+
+::::
+
+
+
+## Finetuning modelos (1/4)
+
+:::{.incremental .medium-par}
+
+- Se realizó un finetuning para los modelos *qantev/trocr-base-spanish* y *qantev/trocr-large-spanish*, utilizando un set de 50 imágenes etiquetadas
+
+  [<img src="imagenes/plots/img_etiquetadas.jpg" width="90%"/>]{.center}
+
+- Se logró detectar correctamente el 24% del set de entrenamiento para el modelo *base.*
+  
+  - El modelo *large* no obtuvo una mejora significativa en comparación al *base*
+  
+  <!-- [<img src="imagenes/plots/pred_train.jpg" width="90%"/>]{.center} -->
+
+:::
+
+## Finetuning modelos (2/4)
+
+:::{.incremental .medium-par}
+
+- Al evaluar la predicción en el set 28 imágenes iniciales, se obtuvo una disminución del desempeño en caracteres numéricos y una leve mejora en palabras:
+
+  [<img src="imagenes/plots/pred_num.jpg" width="90%"/>]{.center}
+
+
+:::
+
+## Finetuning modelos (3/4)
+
+:::{.incremental .medium-par}
+
+- Fechas:
+[<img src="imagenes/plots/pred_fechas.jpg" width="100%"/>]{.center}
+
+:::
+
+## Finetuning modelos (4/4)
+
+:::{.incremental .medium-par}
+
+- Palabras:
+[<img src="imagenes/plots/pred_palabras.jpg" width="95%"/>]{.center}
+
+:::
+
+
+
+## Conclusiones 🚀{.medium-par}
+
+::: incremental
+
+- Si bien los modelos preentrenados funcionan bien detectando caracteres numéricos, estos no logran identificar correctamente las letras.
+
+- Al realizar un _fine-tuning_ con 50 imágenes, se observan leves mejoras en la identificación de palabras, pero disminuye el rendimiento en la detección de caracteres numéricos. 
+
+- Para que el modelo logre captar de forma certera el texto, es necesario tener múltiples tipos de fuentes manuscritas etiquetadas con texto alfanumérico.
+
+  - Se requieren al menos 1000 imágenes para poder entrenar y evaluar el modelo 
+    - A priori no hay garantía de que sea bueno generalizando 
+
+- En base a lo observado, si bien se podría brindar una solución para la problemática 4 (identificación numérica de día sin gastos o registros), hay que evaluar el costo y beneficio que tendría la implementación.
+
+:::
+
+#
+
+[]{.linea-superior} 
+[]{.linea-inferior} 
+
+
+<img src="imagenes/logo_portada2.png" width="20%"/>  
+
+
+[**Prueba de conceptos: detección de texto manuscrito en cuestionario gastos diarios EPF**]{.big-par .center-justified}
+
+[**Área de Ciencia de Datos**]{.medium-par.center-justified}
+
+[**Unidad de Gobierno de Datos**]{.small-par.center-justified}
+
+[**Junio 2025**]{.big-par .center-justified}
+
